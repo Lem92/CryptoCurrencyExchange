@@ -23,7 +23,7 @@
           </div>
           <div class="container">
               <div class="row">
-                  <div class="col-1-3" v-for="item in data">
+                  <div class="col-1-3 col-1-2-xs col-1-1-xxs" v-for="item in data">
                       <div class="currency-item" :class="item.cryptoCurrency.value">
                           <div class="header">{{item.cryptoCurrency.name}}</div>
                           <div class="currency-item__content">
@@ -43,23 +43,27 @@
                               <div class="time-change-wrap">
                                   <div class="currency-item__row">
                                       <div class="left">Hour change</div>
-                                      <div class="right">
-                                          {{item.cryptoCurrency.isPercentChange ? item.json.changes.percent.hour : item.json.changes.price.hour}}
+                                      <div class="right" :class="getValue(item.cryptoCurrency.isPercentChange, item.json.changes, 'hour').sign ? 'green' : 'red'">
+                                          {{getValue(item.cryptoCurrency.isPercentChange, item.json.changes, 'hour').value}}
                                       </div>
                                   </div>
                                   <div class="currency-item__row">
                                       <div class="left">Day change</div>
-                                      <div class="right">
-
+                                      <div class="right" :class="getValue(item.cryptoCurrency.isPercentChange, item.json.changes, 'day').sign ? 'green' : 'red'">
+                                          {{getValue(item.cryptoCurrency.isPercentChange, item.json.changes, 'day').value}}
                                       </div>
                                   </div>
                                   <div class="currency-item__row">
                                       <div class="left">Week change</div>
-                                      <div class="right">$22 526.92</div>
+                                      <div class="right" :class="getValue(item.cryptoCurrency.isPercentChange, item.json.changes, 'week').sign ? 'green' : 'red'">
+                                          {{getValue(item.cryptoCurrency.isPercentChange, item.json.changes, 'week').value}}
+                                      </div>
                                   </div>
                                   <div class="currency-item__row">
                                       <div class="left">Month change</div>
-                                      <div class="right">$22 526.92</div>
+                                      <div class="right" :class="getValue(item.cryptoCurrency.isPercentChange, item.json.changes, 'month').sign ? 'green' : 'red'">
+                                          {{getValue(item.cryptoCurrency.isPercentChange, item.json.changes, 'month').value}}
+                                      </div>
                                   </div>
                               </div>
                           </div>
@@ -96,7 +100,7 @@
                         isPercentChange: false,
                     },
                 ],
-                isDropDownShow: false,
+                isDropDownShow: true,
             }
         },
         methods: {
@@ -106,21 +110,23 @@
                 }).then(response => response.json())
                     .then(json => this.data.push({json, cryptoCurrency}));
             },
-            selectActiveCurrency (currency) {
+            selectActiveCurrency(currency) {
+                this.data = [];
                 this.toggleDropdown();
                 this.activeCurrency = currency;
-                const arrayPromises = [];
                 this.cryptoCurrencies.forEach((item) => {
-                    arrayPromises.push(this.fetchData(item, this.activeCurrency));
+                    this.fetchData(item, this.activeCurrency);
                 });
-                this.data = [];
-                Promise.all(arrayPromises).then(
-                    console.log('dsadsa')
-                );
             },
             toggleDropdown() {
                 this.isDropDownShow = !this.isDropDownShow;
-            }
+            },
+            getValue(isPercentChange, item, valueKey) {
+                return {
+                    value: isPercentChange ? `${item.percent[valueKey]}%` : `${item.price[valueKey]}$`,
+                    sign: parseFloat(isPercentChange ? `${item.percent[valueKey]}%` : `${item.price[valueKey]}$`) > 0
+                }
+            },
         },
         created () {
             this.selectActiveCurrency(this.activeCurrency);
