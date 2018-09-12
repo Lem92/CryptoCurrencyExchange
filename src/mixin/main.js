@@ -3,7 +3,25 @@ export default {
         return {
             data: [],
             activeCurrency: 'USD',
-            currencies: ['USD', 'EUR', 'RUB', 'GBP'],
+            activeCurrencyIcon: '$',
+            currencies: [
+                {
+                    name: 'USD',
+                    icon: '$',
+                },
+                {
+                    name: 'EUR',
+                    icon: '€',
+                },
+                {
+                    name: 'RUB',
+                    icon: '₽',
+                },
+                {
+                    name: 'GBP',
+                    icon: '£',
+                },
+            ],
             cryptoCurrencies: [
                 {
                     value: 'ETH',
@@ -44,9 +62,17 @@ export default {
         },
         getValue(isPercentChange, item, valueKey) {
             return {
-                value: isPercentChange ? `${item.percent[valueKey]}%` : `${item.price[valueKey]}$`,
-                sign: parseFloat(isPercentChange ? `${item.percent[valueKey]}%` : `${item.price[valueKey]}$`) > 0
+                value: isPercentChange ? `${item.percent[valueKey]}%` : `${item.price[valueKey]}${this.activeCurrencyIcon}`,
+                sign: parseFloat(isPercentChange ? `${item.percent[valueKey]}%` : `${item.price[valueKey]}`) > 0
             }
+        },
+        currencyIcon() {
+            this.currencies.forEach((item) => {
+                if(item.name === this.activeCurrency){
+                    this.activeCurrencyIcon = item.icon;
+                }
+            });
+            return this.activeCurrencyIcon;
         },
     },
     created () {

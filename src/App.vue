@@ -11,11 +11,11 @@
                       <ul class="select-block select-drop-down"
                           v-show="isDropDownShow"
                       >
-                          <li v-for="(currency, index) in currencies"
-                              v-if="currency !== activeCurrency"
-                              @click="selectActiveCurrency(currency)"
+                          <li v-for="(currency) in currencies"
+                              v-if="currency.name !== activeCurrency"
+                              @click="selectActiveCurrency(currency.name)"
                           >
-                              {{currency}}
+                              {{currency.name}}
                           </li>
                       </ul>
                   </div>
@@ -29,7 +29,7 @@
                           <div class="currency-item__content">
                               <div class="currency-item__row price-wrap">
                                   <div class="left">Price:</div>
-                                  <div class="right">{{item.json.averages.day}}</div>
+                                  <div class="right">{{currencyIcon()}}{{item.json.averages.day}}</div>
                               </div>
                               <div class="currency-item__row percent-switcher">
                                   <div class="left">Percent change:</div>
